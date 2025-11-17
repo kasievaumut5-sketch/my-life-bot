@@ -1,0 +1,79 @@
+import os
+import asyncio
+from telegram import Bot
+import schedule
+import time
+import random
+
+# Твои данные
+BOT_TOKEN = "8130064444:AAGzhGHJBMWgrFfshcJhlQKKnHouh0i_fEE"
+CHAT_ID = "1204501829"
+
+bot = Bot(token=BOT_TOKEN)
+
+# Списки фраз
+MOTIVATIONS = [
+    "💪 Ты сильнее, чем думаешь! Не сдавайся!",
+    "🌟 У тебя всё получится, я в тебе верю!",
+    "🚀 Помни: даже маленькие шаги ведут к большой цели!",
+    "🌈 После дождя всегда выходит солнце!",
+    "🎯 Ты уже прошел так много, осталось совсем чуть-чуть!"
+]
+
+COMPLIMENTS = [
+    "✨ Ты сегодня просто космос!",
+    "🎨 Твое упорство восхищает!",
+    "🏆 У тебя железная воля!",
+    "💖 Ты вдохновляешь меня каждый день!"
+]
+
+# Функция отправки сообщения
+async def send_message(text):
+    try:
+        await bot.send_message(chat_id=CHAT_ID, text=text)
+        print(f"✅ Отправлено: {text}")
+    except Exception as e:
+        print(f"❌ Ошибка: {e}")
+
+# Функции для расписания
+async def morning_reminder():
+    await send_message("🌅 Доброе утро! Время начинать день! Зарядка, завтрак, вода!")
+
+async def study_reminder():
+    await send_message("📚 Время учиться! Знания - это твоя суперсила!")
+
+async def english_reminder():
+    await send_message("🌍 Английский time! 5 новых слов и подкаст!")
+
+async def motivation_reminder():
+    phrase = random.choice(MOTIVATIONS)
+    await send_message(f"🎗️ {phrase}")
+
+async def evening_reminder():
+    await send_message("🌙 Вечерний ритуал: 1 достижение + 1 мысль отпустить")
+
+async def sleep_reminder():
+    await send_message("😴 Пора спать! Отложи телефон, завтра будет продуктивный день!")
+
+# Основная функция
+async def main():
+    print("🎪 Бот запущен в облаке!")
+    
+    # Тестовое сообщение
+    await send_message("🚀 Бот успешно запущен в облаке! Работаю 24/7!")
+    
+    # Настройка расписания
+    schedule.every().day.at("07:00").do(lambda: asyncio.create_task(morning_reminder()))
+    schedule.every().day.at("10:00").do(lambda: asyncio.create_task(study_reminder()))
+    schedule.every().day.at("17:00").do(lambda: asyncio.create_task(english_reminder()))
+    schedule.every().day.at("19:00").do(lambda: asyncio.create_task(motivation_reminder()))
+    schedule.every().day.at("19:40").do(lambda: asyncio.create_task(evening_reminder()))
+    schedule.every().day.at("23:40").do(lambda: asyncio.create_task(sleep_reminder()))
+    
+    # Бесконечный цикл
+    while True:
+        schedule.run_pending()
+        await asyncio.sleep(60)
+
+if __name__ == "__main__":
+    asyncio.run(main())
